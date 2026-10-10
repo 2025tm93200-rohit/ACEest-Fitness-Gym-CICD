@@ -24,4 +24,4 @@ pipeline {
   post {
     always { sh "docker image rm ${IMAGE_NAME}:${IMAGE_TAG} || true" }
   }
-}
+} 

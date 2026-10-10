@@ -16,7 +16,7 @@ pipeline {
     }
     stage("Automated Tests") {
       steps { sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} pytest -q" }
-    }
+    } 
     stage("Quality Gate") {
       steps { sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} flake8 app.py tests" }
     }

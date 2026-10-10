@@ -8,4 +8,4 @@ COPY tests ./tests
 RUN useradd --create-home --shell /usr/sbin/nologin appuser && chown -R appuser:appuser /app
 USER appuser
 EXPOSE 5000
-CMD ["gunicorn","--bind","0.0.0.0:5000","app:app"]
+CMD ["gunicorn","--bind","0.0.0.0:5000","app:app"] 

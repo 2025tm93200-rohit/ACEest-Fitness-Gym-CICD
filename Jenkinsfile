@@ -13,7 +13,7 @@ pipeline {
     }
     stage("Syntax Check") {
       steps { sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} python -m py_compile app.py" }
-    }
+    } 
     stage("Automated Tests") {
       steps { sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} pytest -q" }
     }  

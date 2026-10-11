@@ -19,7 +19,7 @@ pipeline {
 
     stage("Build") {
       steps {
-        bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+        bat "docker buildx build --load -t ${IMAGE_NAME}:${IMAGE_TAG} ."
       }
     }
 

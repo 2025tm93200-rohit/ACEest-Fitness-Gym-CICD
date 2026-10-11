@@ -23,6 +23,12 @@ def test_home(client):
     assert response.get_json()["application"] == "ACEest Fitness & Gym"
 
 
+def test_ui(client):
+    response = client.get("/ui")
+    assert response.status_code == 200
+    assert b"Application is running successfully." in response.data
+
+
 def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
@@ -57,12 +63,27 @@ def test_delete_member(client):
     response = client.delete("/members/1")
     assert response.status_code == 200
     assert response.get_json()["message"] == "member deleted"
+    assert client.get("/members").get_json() == []
+
+
+def test_delete_member_not_found(client):
+    response = client.delete("/members/999")
+    assert response.status_code == 404
 
 
 def test_add_member_invalid(client):
     response = client.post("/members", json={"name": "Dana"})
     assert response.status_code == 400
     assert response.get_json()["error"] == "name and age are required"
+
+
+def test_add_member_bad_age(client):
+    response = client.post("/members", json={"name": "Eve", "age": "abc"})
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "age must be an integer"
+    response = client.post("/members", json={"name": "Eve", "age": 0})
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "age must be greater than 0"
 
 
 def test_get_member_not_found(client):

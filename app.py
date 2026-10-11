@@ -3,6 +3,43 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 members = []
 
+UI_PAGE = """
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ACEest Fitness & Gym</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background: white;
+            padding: 40px 60px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { color: #1f3a5f; margin-bottom: 12px; }
+        p { color: #555; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>ACEest Fitness & Gym</h1>
+        <p>Application is running successfully.</p>
+    </div>
+</body>
+</html>
+"""
+
 
 @app.get("/")
 def home():
@@ -14,48 +51,7 @@ def home():
 
 @app.get("/ui")
 def ui():
-    return """
-    <!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>ACEest Fitness & Gym</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f4f4f4;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-            .card {
-                background: white;
-                padding: 40px 60px;
-                border-radius: 12px;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-                text-align: center;
-            }
-            h1 {
-                color: #1f3a5f;
-                margin-bottom: 12px;
-            }
-            p {
-                color: #555;
-                font-size: 18px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <h1>ACEest Fitness & Gym</h1>
-            <p>Application is running successfully.</p>
-        </div>
-    </body>
-    </html>
-    """
+    return UI_PAGE
 
 
 @app.get("/health")
@@ -86,7 +82,7 @@ def add_member():
         return jsonify({"error": "age must be greater than 0"}), 400
 
     member = {
-        "id": len(members) + 1,
+        "id": max((m["id"] for m in members), default=0) + 1,
         "name": name,
         "age": age,
         "plan": data.get("plan", "monthly"),
@@ -105,12 +101,10 @@ def get_member(member_id):
 
 @app.delete("/members/<int:member_id>")
 def delete_member(member_id):
-    global members
-
     if not any(m["id"] == member_id for m in members):
         return jsonify({"error": "member not found"}), 404
 
-    members = [m for m in members if m["id"] != member_id]
+    members[:] = [m for m in members if m["id"] != member_id]
     return jsonify({"message": "member deleted"})
 
 

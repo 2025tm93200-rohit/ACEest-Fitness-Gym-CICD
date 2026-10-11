@@ -31,13 +31,13 @@ pipeline {
 
     stage("Automated Tests") {
       steps {
-        bat "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} pytest -q"
+        bat "docker run --rm -e PYTHONPATH=/app ${IMAGE_NAME}:${IMAGE_TAG} pytest -q"
       }
     }
 
     stage("Quality Gate") {
       steps {
-        bat "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} flake8 app.py tests"
+        bat "docker run --rm -e PYTHONPATH=/app ${IMAGE_NAME}:${IMAGE_TAG} flake8 app.py tests"
       }
     }
   }

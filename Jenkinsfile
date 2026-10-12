@@ -4,6 +4,8 @@ pipeline {
   environment {
     IMAGE_NAME = "aceest-fitness-gym"
     IMAGE_TAG = "${BUILD_NUMBER}"
+    SONAR_HOST_URL = "http://sonarqube:9000"
+    SONAR_PROJECT_KEY = "aceest-fitness-gym"
   }
 
   triggers {
@@ -38,6 +40,20 @@ pipeline {
     stage("Quality Gate") {
       steps {
         bat "docker run --rm -e PYTHONPATH=/app ${IMAGE_NAME}:${IMAGE_TAG} flake8 app.py tests"
+      }
+    }
+
+    stage("SonarQube Analysis") {
+      steps {
+        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+          bat """
+          docker run --rm ^
+            -e SONAR_HOST_URL=%SONAR_HOST_URL% ^
+            -e SONAR_TOKEN=%SONAR_TOKEN% ^
+            -v "%cd%":/usr/src ^
+            sonarsource/sonar-scanner-cli:latest
+          """
+        }
       }
     }
   }

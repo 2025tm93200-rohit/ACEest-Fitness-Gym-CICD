@@ -93,9 +93,13 @@ Checkout -> Python setup -> dependencies -> syntax check -> Flake8 -> Pytest -> 
 ## Jenkins
 
 The `Jenkinsfile` performs:
-Checkout -> Docker Build -> Syntax Check -> Pytest -> Flake8 Quality Gate.
+Checkout -> Docker Build -> Syntax Check -> Pytest -> Flake8 Quality Gate -> SonarQube Analysis.
 
-Create a Jenkins Pipeline job using **Pipeline script from SCM**, Git, branch `*/main`, and script path `Jenkinsfile`. The Jenkins agent needs Docker and Git.
+Create a Jenkins Pipeline job using **Pipeline script from SCM**, Git, branch `*/main`, and script path `Jenkinsfile`. The Jenkins agent needs Docker and Git. Configure a Jenkins secret text credential named `sonarqube-token` and set the SonarQube server URL in the pipeline environment if your instance is not running at `http://sonarqube:9000`.
+
+## SonarQube
+
+Add a `sonar-project.properties` file at the project root and point Jenkins to the SonarQube server. The scanner will report code quality metrics, code smells, and coverage once the `sonarqube-token` credential is available.
 
 ## Submission evidence
 

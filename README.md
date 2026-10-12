@@ -99,7 +99,7 @@ Create a Jenkins Pipeline job using **Pipeline script from SCM**, Git, branch `*
 
 ## SonarQube
 
-Add a `sonar-project.properties` file at the project root and point Jenkins to the SonarQube server. The scanner will report code quality metrics, code smells, and coverage once the `sonarqube-token` credential is available.
+Add a `sonar-project.properties` file at the project root and point Jenkins to the SonarQube server. For Docker Desktop/WSL-based Jenkins runs, the scanner cannot reliably resolve `http://sonarqube:9000`, so the default pipeline URL is set to `http://host.docker.internal:9000`. If SonarQube is running elsewhere, update the `SONAR_HOST_URL` environment variable in the Jenkins pipeline or the Jenkins credentials/config for the job. The scanner also waits for the SonarQube quality gate before the pipeline continues.
 
 ## Submission evidence
 

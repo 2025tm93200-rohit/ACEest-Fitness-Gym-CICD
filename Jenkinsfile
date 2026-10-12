@@ -4,7 +4,7 @@ pipeline {
   environment {
     IMAGE_NAME = "aceest-fitness-gym"
     IMAGE_TAG = "${BUILD_NUMBER}"
-    SONAR_HOST_URL = "http://sonarqube:9000"
+    SONAR_HOST_URL = "http://host.docker.internal:9000"
     SONAR_PROJECT_KEY = "aceest-fitness-gym"
   }
 
@@ -48,10 +48,19 @@ pipeline {
         withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
           bat """
           docker run --rm ^
+            --add-host=host.docker.internal:host-gateway ^
             -e SONAR_HOST_URL=%SONAR_HOST_URL% ^
             -e SONAR_TOKEN=%SONAR_TOKEN% ^
             -v "%cd%":/usr/src ^
-            sonarsource/sonar-scanner-cli:latest
+            sonarsource/sonar-scanner-cli:latest ^
+            -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+            -Dsonar.projectName=ACEest Fitness & Gym ^
+            -Dsonar.sources=. ^
+            -Dsonar.tests=tests ^
+            -Dsonar.sourceEncoding=UTF-8 ^
+            -Dsonar.python.version=3 ^
+            -Dsonar.qualitygate.wait=true ^
+            -Dsonar.qualitygate.timeout=600
           """
         }
       }
